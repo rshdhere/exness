@@ -32,3 +32,8 @@ export const CLOSED_ORDERS: Record<string, Record<string, {
     closeTimeStamp: number;
     closeReason: 'manual' | 'take_profit' | 'stop_loss' | 'liquidation';
 }>> = {};
+
+export const PRICE_STORE: Record<string, {
+    ask: string;
+    bid: string;
+}> = {};
