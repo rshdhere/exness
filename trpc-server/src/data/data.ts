@@ -37,3 +37,15 @@ export const PRICE_STORE: Record<string, {
     ask: string;
     bid: string;
 }> = {};
+
+export const DURATION_TABLE_MAP = {
+    "1m": "candles_1m",
+    "1d": "candles_1d",
+    "1w": "candles_1w",
+} as const;
+
+export const ASSET_SYMBOL_MAP = {
+    BTC: "BTCUSDT",
+    ETH: "ETHUSDT",
+    SOL: "SOLUSDT",
+} as const;

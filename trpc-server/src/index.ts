@@ -7,6 +7,7 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import { tradesRouter } from "./routes/v1/trades";
 import { tradeRouter } from "./routes/v1/trade";
 import { assetRouter } from "./routes/v1/asset";
+import { candlesRouter } from "./routes/v1/candles";
 
 export const appRouter = router({
     v1: router({
@@ -14,6 +15,7 @@ export const appRouter = router({
         asset: assetRouter,
         trade: tradeRouter,
         trades: tradesRouter,
+        candles: candlesRouter,
     })
 });
 
