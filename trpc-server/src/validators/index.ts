@@ -1,5 +1,21 @@
 import { z } from "zod";
 
+// asset-procedure validation
+const assetItemSchema = z.object({
+    name: z.string(),
+    symbol: z.string(),
+    buyPrice: z.number(),
+    sellPrice: z.number(),
+    decimals: z.number(),
+    imageUrl: z.url(),
+}).strict();
+
+export const assetSchema = {
+    getAssetsOutput: z.object({
+        assets: z.array(assetItemSchema),
+    }).strict(),
+};
+
 // trade-procedure validation
 export type TradeAsset = z.infer<typeof tradeSchema>["asset"];
 
