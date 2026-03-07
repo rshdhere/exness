@@ -13,7 +13,7 @@ export const appRouter = router({
 
 export type AppRouter = typeof appRouter;
 
-const app = express();
+export const app = express();
 
 app.use(express.json());
 
@@ -51,7 +51,7 @@ app.use("/trpc", trpcExpress.createExpressMiddleware({
             }
 
         } catch {
-            
+
             return {
                 userId: undefined
             }
