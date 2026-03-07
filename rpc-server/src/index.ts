@@ -1,6 +1,9 @@
 import express from "express";
-import { userRouter } from "./routes/v1/user";
 import { router } from "./trpc";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "./config/config";
+import { userRouter } from "./routes/v1/user";
+import * as trpcExpress from "@trpc/server/adapters/express";
 
 export const appRouter = router({
     v1: router({
@@ -13,3 +16,45 @@ export type AppRouter = typeof appRouter;
 const app = express();
 
 app.use(express.json());
+
+app.use("/trpc", trpcExpress.createExpressMiddleware({
+    router: appRouter,
+    createContext({ req }) {
+
+        const authHeader = req.headers.authorization;
+
+        if (!JWT_SECRET || authHeader?.endsWith(" Bearer")){
+            return {
+                userId: undefined
+            }
+        };
+
+        const token = authHeader?.split(" ")[1];
+
+        if (!token){
+            return {
+                userId: undefined
+            }
+        }
+
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET);
+
+            if (typeof decoded !== 'object' || typeof decoded.userId !== 'string' || decoded === null){
+                return {
+                    userId: undefined
+                }
+            };
+
+            return {
+                userId: decoded.userId
+            }
+
+        } catch {
+            
+            return {
+                userId: undefined
+            }
+        }
+    }
+}))
