@@ -1,4 +1,4 @@
-import { ORDERS } from "../../data/data";
+import { CLOSED_ORDERS, ORDERS } from "../../data/data";
 import { privateProcedure, router } from "../../trpc";
 import { orderSchema } from "../../validators";
 
@@ -38,5 +38,29 @@ export const tradesRouter = router({
 
     getAll: privateProcedure
     .output(orderSchema.getAllOutput)
-    .query()
+    .query(({ ctx }) => {
+        const userId = ctx.userId;
+
+        if (!CLOSED_ORDERS[userId]){
+            return {
+                trades: []
+            }
+        };
+
+        const formattedTrades = Object.entries(CLOSED_ORDERS[userId]).map(
+            ([orderId, order]) => ({
+                orderId,
+                type: order.type,
+                margin: order.margin,
+                leverage: order.leverage,
+                openPrice: order.openPrice,
+                closePrice: order.closePrice,
+                pnl: order.pnl,
+            })
+        );
+
+        return {
+            trades: formattedTrades
+        };
+    })
 })
