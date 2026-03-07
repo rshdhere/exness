@@ -19,11 +19,11 @@ app.use(express.json());
 
 app.use("/trpc", trpcExpress.createExpressMiddleware({
     router: appRouter,
-    createContext({ req }) {
+    createContext({ req }: trpcExpress.CreateExpressContextOptions) {
 
         const authHeader = req.headers.authorization;
 
-        if (!JWT_SECRET || authHeader?.endsWith(" Bearer")){
+        if (!JWT_SECRET || !authHeader || !authHeader.startsWith("Bearer ")) {
             return {
                 userId: undefined
             }
