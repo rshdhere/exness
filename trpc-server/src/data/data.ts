@@ -19,3 +19,16 @@ export const ORDERS: Record<string, Record<string, {
     stopLoss?: number;
     liquidationPrice?: number
 }>> = {};
+
+export const CLOSED_ORDERS: Record<string, Record<string, {
+    type: 'buy' | 'sell';
+    margin: number;
+    leverage: number;
+    asset: string;
+    closePrice: number;
+    openPrice: number;
+    pnl: number;
+    timeStamp: number;
+    closeTimeStamp: number;
+    closeReason: 'manual' | 'take_profit' | 'stop_loss' | 'liquidation';
+}>> = {};
