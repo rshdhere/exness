@@ -6,10 +6,12 @@ import { userRouter } from "./routes/v1/user";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { tradesRouter } from "./routes/v1/trades";
 import { tradeRouter } from "./routes/v1/trade";
+import { assetRouter } from "./routes/v1/asset";
 
 export const appRouter = router({
     v1: router({
         user: userRouter,
+        asset: assetRouter,
         trade: tradeRouter,
         trades: tradesRouter,
     })
