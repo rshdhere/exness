@@ -4,6 +4,7 @@ import { authSchema } from "../../validators";
 import { PLACEHOLDER } from "../../config/config";
 import { USERS } from "../../data/data";
 import { TRPCError } from "@trpc/server";
+import { toInternalUSD } from "../../utils/utils";
 
 export const userRouter = router({
     signup: publicProcedure
@@ -23,8 +24,13 @@ export const userRouter = router({
             email: input.email,
             password: input.password,
             balance: {
-                usd_balance: 
-            }
+                usd_balance: toInternalUSD(50000)
+            },
+            asset: {}
+        }
+
+        return {
+            userId: uuid
         }
     }),
 
