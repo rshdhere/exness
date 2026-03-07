@@ -5,11 +5,13 @@ import { JWT_SECRET } from "./config/config";
 import { userRouter } from "./routes/v1/user";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { tradesRouter } from "./routes/v1/trades";
+import { tradeRouter } from "./routes/v1/trade";
 
 export const appRouter = router({
     v1: router({
         user: userRouter,
-        trades: tradesRouter
+        trade: tradeRouter,
+        trades: tradesRouter,
     })
 });
 
