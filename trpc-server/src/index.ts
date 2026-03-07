@@ -4,10 +4,12 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "./config/config";
 import { userRouter } from "./routes/v1/user";
 import * as trpcExpress from "@trpc/server/adapters/express";
+import { tradesRouter } from "./routes/v1/trades";
 
 export const appRouter = router({
     v1: router({
-        user: userRouter
+        user: userRouter,
+        trades: tradesRouter
     })
 });
 
