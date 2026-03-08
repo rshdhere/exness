@@ -1,15 +1,13 @@
 # price-poller
 
-To install dependencies:
+to run postgres locally use this command
 
 ```bash
-bun install
+docker run -d \
+  -p 5433:5432 \
+  -e POSTGRES_PASSWORD=XYZ@123 \
+  -e POSTGRES_USER=user \
+  -e POSTGRES_DB=trades_db \
+  --name trades-postgres \
+  postgres
 ```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.2.3. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
