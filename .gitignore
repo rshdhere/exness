@@ -34,3 +34,6 @@ yarn-error.log*
 # Production build
 /dist
 /build
+
+# Generated (e.g. Prisma client)
+price-poller/src/generated/
