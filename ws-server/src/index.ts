@@ -12,3 +12,9 @@ const websocket = new WebSocketServer({
 const client = new Map<WebSocket, Set<string>>();
 
 export const Channels = ['SOL', 'ETH', 'BTC'];
+
+const start = async () => {
+
+};
+
+start().catch(console.error);
