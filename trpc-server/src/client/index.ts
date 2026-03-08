@@ -1,7 +1,7 @@
-import { Client } from "pg";
+import { Pool } from "pg";
 import { createClient } from "redis";
 
-export const pgClient = new Client({
+export const pgClient = new Pool({
   host: "localhost",
   port: 5433,
   user: "user",

@@ -4,10 +4,11 @@ import { BATCH_TIMMINGS, BINANCE_STREAMS, BINANCE_URL, toInternalPrice, type Tra
 import { pushToRedis } from "./redis-ops";
 
 let tradeBatch: TradeBatchItem[] = [];
+const redisUrl = process.env.REDIS_URL ?? "redis://localhost:6379";
 
 async function main(){
     const redis = await createClient({
-        url: "redis://redis_service:6379"
+        url: redisUrl
     }).connect();
 
     console.log('connected to redis successfully');
@@ -65,4 +66,4 @@ async function main(){
 
 }
 
-main();
+main().catch(console.error);

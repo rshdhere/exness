@@ -20,16 +20,16 @@ export const assetSchema = {
 export type TradeAsset = z.infer<typeof tradeSchema>["asset"];
 
 export const tradeOpenOutputSchema = z.object({
-    orderId: z.uuid()
+    orderId: z.uuid(),
 }).strict();
 
 export const tradeCloseInputSchema = z.object({
-    orderId: z.uuid()
+    orderId: z.uuid(),
 }).strict();
 
 export const tradeCloseOutputSchema = z.object({
     pnl: z.number(),
-    message: z.string()
+    message: z.string(),
 }).strict();
 
 export const tradeSchema = z.object({
@@ -57,7 +57,7 @@ const tradesOutputSchema = z.object({
     openPrice: z.number().positive(),
     takeProfit: z.number().positive().optional(),
     stopLoss: z.number().positive().optional(),
-    liquidationPrice: z.number().positive().optional()
+    liquidationPrice: z.number().positive().optional(),
 }).strict();
 
 const closedTradesOutputSchema = z.object({
@@ -67,7 +67,7 @@ const closedTradesOutputSchema = z.object({
     leverage: z.number().positive(),
     openPrice: z.number().positive(),
     closePrice: z.number().positive(),
-    pnl: z.number()
+    pnl: z.number(),
 }).strict();
 
 export const orderSchema = {
@@ -76,11 +76,11 @@ export const orderSchema = {
     trade: tradesOutputSchema,
     closedTrade: closedTradesOutputSchema,
     openOutput: z.object({
-        trades: z.array(tradesOutputSchema)
+        trades: z.array(tradesOutputSchema),
     }).strict(),
     getAllOutput: z.object({
-        trades: z.array(closedTradesOutputSchema)
-    }).strict()
+        trades: z.array(closedTradesOutputSchema),
+    }).strict(),
 };
 
 // candles-procedure validation
@@ -100,11 +100,11 @@ export const candlesSchema = {
         startTime: z.number().int().nonnegative(),
         endTime: z.number().int().nonnegative(),
     })
-    .strict()
-    .refine((value) => value.startTime <= value.endTime, {
-        message: "startTime cannot be greater than endTime",
-        path: ["endTime"],
-    }),
+        .strict()
+        .refine((value) => value.startTime <= value.endTime, {
+            message: "startTime cannot be greater than endTime",
+            path: ["endTime"],
+        }),
     getAllOutput: z.object({
         candles: z.array(candleItemSchema),
     }).strict(),
@@ -112,25 +112,40 @@ export const candlesSchema = {
 
 // user-procedure validation
 export const authSchema = {
-    input: z.object({
-        email: z.email( { message: "invalid email for sign-up procedure" } ),
-        password: z.string()
-        .min(8, {message: "password should be minimum of 8 charachters"})
-        .max(24, {message: "password should be maximum of 24 charachters"})
-        .regex(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/,
-            {
-                message: "password must contain at least one upper-case letter, one lower-case letter, a number, and a special-character"
-            }
-        )
-    }).strict(),
+    input: z
+        .object({
+            email: z.email({ message: "invalid email for sign-up procedure" }),
+            password: z
+                .string()
+                .min(8, { message: "password should be minimum of 8 charachters" })
+                .max(24, { message: "password should be maximum of 24 charachters" })
+                .regex(
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/,
+                    {
+                        message:
+                            "password must contain at least one upper-case letter, one lower-case letter, a number, and a special-character",
+                    },
+                ),
+        })
+        .strict(),
 
-    output: z.object({
-        userId: z.uuid()
-    }).strict(),
+    output: z
+        .object({
+            userId: z.uuid(),
+        })
+        .strict(),
 
-    signinOutput: z.object({
-        token: z.string().min(1)
-    }).strict()
+    signinOutput: z
+        .object({
+            token: z.string().min(1),
+        })
+        .strict(),
+};
 
-}
+export const userSchema = {
+    meOutput: z
+        .object({
+            usdBalance: z.number(),
+        })
+        .strict(),
+};

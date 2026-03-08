@@ -1,12 +1,15 @@
 import { createClient } from "redis";
 import { WebSocketServer, WebSocket } from "ws";
 
+const redisUrl = process.env.REDIS_URL ?? "redis://localhost:6379";
+const wsPort = Number(process.env.WS_PORT ?? 8086);
+
 const redis = createClient({
-    url: "redis://redis_service:6379"
+    url: redisUrl
 });
 
 const websocket = new WebSocketServer({
-    port: 8086
+    port: wsPort
 });
 
 const client = new Map<WebSocket, Set<string>>();
@@ -15,6 +18,7 @@ export const Channels = ['SOL', 'ETH', 'BTC'];
 
 const start = async () => {
     await redis.connect();
+    console.log(`your ws-server is listening on ws://localhost:${wsPort}`);
 
     Channels.forEach((ch) => {
         redis.subscribe(ch, (data) => {

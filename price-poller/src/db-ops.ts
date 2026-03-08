@@ -1,4 +1,5 @@
 import type { TradeBatchItem } from "./utils";
+import prisma from "./dbconfig";
 
 export async function saveTradeBatch(tradeBatch: TradeBatchItem[]){
     if (tradeBatch.length === 0){

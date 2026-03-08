@@ -1,20 +1,23 @@
-import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
-import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
-
 import type { AppRouter } from "../../../trpc-server/src/index";
+import { getAuthToken } from "../lib/auth";
 
-export const queryClient = new QueryClient();
+const TRPC_URL = import.meta.env.VITE_TRPC_URL ?? "/trpc";
 
-const trpcClient = createTRPCClient<AppRouter>({
+export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: "http://localhost:5174/trpc",
+      url: TRPC_URL,
+      headers() {
+        const token = getAuthToken();
+        if (!token) {
+          return {};
+        }
+
+        return {
+          authorization: `Bearer ${token}`,
+        };
+      },
     }),
   ],
-});
-
-export const trpc = createTRPCOptionsProxy<AppRouter>({
-  client: trpcClient,
-  queryClient,
 });

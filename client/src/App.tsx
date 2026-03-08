@@ -1,35 +1,59 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import type { ReactNode } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
+import { getAuthToken } from "./lib/auth.ts";
+import { HomePage } from "./pages/HomePage.tsx";
+import { SignInPage } from "./pages/SignInPage.tsx";
+import { SignUpPage } from "./pages/SignUpPage.tsx";
+import { TradingPage } from "./pages/TradingPage.tsx";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+function RequireAuth({ children }: { children: ReactNode }) {
+  if (!getAuthToken()) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  return <>{children}</>;
 }
 
-export default App
+function OnlyGuests({ children }: { children: ReactNode }) {
+  if (getAuthToken()) {
+    return <Navigate to="/trading" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route
+        path="/signin"
+        element={
+          <OnlyGuests>
+            <SignInPage />
+          </OnlyGuests>
+        }
+      />
+      <Route
+        path="/signup"
+        element={
+          <OnlyGuests>
+            <SignUpPage />
+          </OnlyGuests>
+        }
+      />
+      <Route
+        path="/trading"
+        element={
+          <RequireAuth>
+            <TradingPage />
+          </RequireAuth>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
+export default App;
