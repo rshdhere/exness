@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { CLOSED_ORDERS, ORDERS, PRICE_STORE, USERS } from "../../data/data";
+import { ORDERS, PRICE_STORE, USERS } from "../../data/data";
+import { closeOrder } from "../../service/closeOrder";
 import { privateProcedure, router } from "../../trpc";
 import { tradeCloseInputSchema, tradeCloseOutputSchema, tradeOpenOutputSchema, tradeSchema, type TradeAsset } from "../../validators";
 import { v4 } from "uuid";
@@ -86,47 +87,20 @@ export const tradeRouter = router({
         };
 
         const orderId = input.orderId;
+        if (!ORDERS[userId]?.[orderId]) {
+            throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "order not found"
+            });
+        };
 
-        const order = ORDERS[userId][orderId];
-        const basePriceData = PRICE_STORE[order.asset];
-        const closePriceRaw = 
-        order.type === 'buy' ? basePriceData.bid : basePriceData.ask;
-
-        if (closePriceRaw === null) {
+        const pnl = closeOrder(userId, orderId, "manual");
+        if (pnl === null) {
             throw new TRPCError({
                 code: "BAD_REQUEST",
                 message: "Invalid asset or missing price"
             });
-        }
-
-        const closePrice = Number(closePriceRaw);
-
-        const pnl = 
-        order.type === 'buy'
-        ? Math.round(((closePrice - order.openPrice)/order.openPrice) * order.margin * order.leverage)
-        : Math.round(((order.openPrice - closePrice)/order.openPrice) * order.margin * order.leverage)
-
-
-        user.balance.usd_balance += pnl + order.margin;
-
-        if (!CLOSED_ORDERS[userId]) {
-            CLOSED_ORDERS[userId] = {};
         };
-
-        CLOSED_ORDERS[userId][orderId] = {
-            type: order.type,
-            margin: order.margin,
-            leverage: order.leverage,
-            asset: order.asset,
-            openPrice: order.openPrice,
-            closePrice,
-            pnl,
-            timeStamp: order.timeStamp,
-            closeTimeStamp: Date.now(),
-            closeReason: "manual",
-        };
-
-        delete ORDERS[userId][orderId];
 
         return {
             pnl,
